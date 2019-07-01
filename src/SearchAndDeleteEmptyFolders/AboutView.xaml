@@ -1,0 +1,72 @@
+﻿<Page x:Class="SearchAndDeleteEmptyFolders.AboutView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:SearchAndDeleteEmptyFolders"
+      mc:Ignorable="d"
+      Title="AboutView">
+
+    <Page.DataContext>
+        <local:MainViewModel x:Name="mvm" />
+    </Page.DataContext>
+
+    <Border Tag="About"
+            DataContext="{Binding AboutViewModel}"
+            Grid.Row="0"
+            Background="{Binding BackgroundColor}">
+
+        <Border.Effect>
+            <DropShadowEffect Direction="-80"
+                              ShadowDepth="5"
+                              Opacity="0.5" />
+        </Border.Effect>
+
+        <Grid Margin="13,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0"
+                   Source="{Binding AppIcon}"
+                   Width="128"
+                   Height="128" />
+
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        FlowDirection="RightToLeft">
+
+                <TextBlock Text="{Binding AppName}"
+                           FontSize="18" />
+                <TextBlock Text="{Binding AppVersion}" />
+                <TextBlock>
+                            <Hyperlink Command="{Binding NavigateHomeUrlCmd}">
+                                Project Home
+                            </Hyperlink>
+                </TextBlock>
+                <TextBlock>
+                            <Hyperlink Command="{Binding NavigateLicenseUrlCmd}">
+                                License
+                            </Hyperlink>
+                </TextBlock>
+                <TextBlock>
+                            <Hyperlink Command="{Binding NavigateChangelogUrlCmd}">
+                                Change log
+                            </Hyperlink>
+                </TextBlock>
+                <TextBlock>
+                            <Hyperlink Command="{Binding NavigateDownloadUrlCmd}">
+                                Download Latest
+                            </Hyperlink>
+                </TextBlock>
+                <TextBlock>
+                            <Hyperlink Command="{Binding NavigateIssuesUrlCmd}">
+                                Submit Issues and Requests
+                            </Hyperlink>
+                </TextBlock>
+
+            </StackPanel>
+        </Grid>
+    </Border>
+</Page>

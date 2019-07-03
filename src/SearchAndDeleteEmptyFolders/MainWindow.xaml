@@ -31,7 +31,8 @@
 
         <Grid Tag="Body"
               Grid.Row="1"
-              Margin="13">
+              Margin="13"
+              DataContext="{Binding DeleteEmptyFolderViewModel}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -49,12 +50,17 @@
             <TextBlock Grid.Row="0"
                        Text="Select a directory to search for empty folders" />
             <TextBox Grid.Row="1"
-                     Grid.Column="0" />
+                     Grid.Column="0"
+                     Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Row="1"
                     Grid.Column="1"
-                    Content="Select..." />
+                    Content="Select..."
+                    Command="{Binding SelectSourceCmd}"/>
             <ListBox Grid.Row="2"
-                     Grid.ColumnSpan="2" />
+                     Grid.ColumnSpan="2"
+                     x:Name="EmptyFolders"
+                     SelectionMode="Multiple"
+                     ItemsSource="{Binding EmptyFolders}"/>
 
             <Grid Grid.Row="3"
                   Grid.ColumnSpan="2"
@@ -69,21 +75,24 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <CheckBox Grid.Column="0"
-                          Content="Select All" />
+                          Content="Select All"
+                          IsChecked="{Binding IsSelectAllChecked}"
+                          Command="{Binding SelectAllCmd}"
+                          CommandParameter="{Binding ElementName=EmptyFolders}"/>
                 <TextBlock Grid.Column="1"
-                           Text="{Binding FoundValue}" />
+                           Text="{Binding Found}" />
                 <TextBlock Grid.Column="2"
-                           Text=": Found"
+                           Text=": Found "
                            Margin="0,0,2.5,0" />
                 <TextBlock Grid.Column="3"
-                           Text="{Binding DeletedValue}" />
+                           Text="{Binding Deleted}" />
                 <TextBlock Grid.Column="4"
-                           Text=": Deleted"
+                           Text=": Deleted "
                            Margin="0,0,2.5,0" />
                 <TextBlock Grid.Column="5"
-                           Text="{Binding ErrorValue}" />
-                <TextBlock Grid.Column="5"
-                           Text=": Error" />
+                           Text="{Binding Errors}" />
+                <TextBlock Grid.Column="6"
+                           Text=": Errors" />
             </Grid>
 
             <Grid Tag="Actions"
@@ -101,7 +110,8 @@
 
                 <Button Grid.Column="1"
                         Content="Clear"
-                        Margin="0,0,5,0" />
+                        Margin="0,0,5,0"
+                        Command="{Binding ClearlCmd}"/>
                 <Button Grid.Column="2"
                         Content="Search"
                         Margin="0,0,5,0" />

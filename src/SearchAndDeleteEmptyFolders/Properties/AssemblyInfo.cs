@@ -7,7 +7,7 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SearchAndDeleteEmptyFolders")]
+[assembly: AssemblyTitle("SAD Empty Folders")]
 [assembly: AssemblyDescription("Easily find and delete all empty folders from a path.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CodeDek")]

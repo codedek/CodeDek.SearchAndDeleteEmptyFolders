@@ -24,12 +24,14 @@ namespace SearchAndDeleteEmptyFolders
             Status = text;
             Passage = passage;
             PassageUrl = url;
+            DeleteEmptyFolderViewModel = new DeleteEmptyFolderViewModel(this);
         }
 
         public string Title { get; } = "CodeDek's SAD Empty Folders";
         public int MinHeight { get; } = 480;
         public int MinWidth { get; } = 720;
         public AboutViewModel AboutViewModel { get; } = new AboutViewModel();
+        public DeleteEmptyFolderViewModel DeleteEmptyFolderViewModel { get; }
 
         public string Status
         {

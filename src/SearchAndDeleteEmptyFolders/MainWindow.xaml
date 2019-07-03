@@ -62,7 +62,16 @@
                      x:Name="EmptyFolders"
                      SelectionMode="Multiple"
                      ItemsSource="{Binding EmptyFolders}"
-                     SelectedIndex="{Binding SelectedIndex}" />
+                     SelectedIndex="{Binding SelectedIndex}">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Open"
+                                  Command="{Binding OpenMenuCmd}" />
+                        <MenuItem Header="Copy"
+                                  Command="{Binding CopyMenuCmd}" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+            </ListBox>
 
             <Grid Grid.Row="3"
                   Grid.ColumnSpan="2"

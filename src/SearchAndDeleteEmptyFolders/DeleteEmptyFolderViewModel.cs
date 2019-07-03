@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using CodeDek.Lib;
 using CodeDek.Lib.Mvvm;
@@ -100,7 +99,9 @@ namespace SearchAndDeleteEmptyFolders
         {
             get => _selectionChanged;
             set => Set(ref _selectionChanged, value)
-                .Alert(nameof(DeleteCmd));
+                .Alert(nameof(DeleteCmd))
+                .Alert(nameof(OpenMenuCmd))
+                .Alert(nameof(CopyMenuCmd));
         }
 
         public bool IsParallelSearch
@@ -115,6 +116,14 @@ namespace SearchAndDeleteEmptyFolders
             set => Set(ref _isCanceledSearch, value)
                 .Alert(nameof(CancelCmd));
         }
+
+        public Cmd OpenMenuCmd => new Cmd(() => Process.Start(EmptyFolders[SelectedIndex]), () => SelectedIndex > -1);
+
+        public Cmd CopyMenuCmd => new Cmd(() =>
+        {
+            Clipboard.SetText(EmptyFolders[SelectedIndex]);
+            MessageBox.Show($"{EmptyFolders[SelectedIndex]}", "Path copied to clipboard.");
+        }, () => SelectedIndex > -1);
 
         public Cmd CancelCmd => new Cmd(() =>
         {

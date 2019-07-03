@@ -62,7 +62,7 @@
                      x:Name="EmptyFolders"
                      SelectionMode="Multiple"
                      ItemsSource="{Binding EmptyFolders}"
-                     SelectedIndex="{Binding SelectedIndex}"/>
+                     SelectedIndex="{Binding SelectedIndex}" />
 
             <Grid Grid.Row="3"
                   Grid.ColumnSpan="2"
@@ -108,24 +108,30 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="1"
                         Content="Clear"
-                        Margin="0,0,5,0"
+                        Margin="0,5,5,5"
                         Command="{Binding ClearlCmd}" />
-                <Button Grid.Column="2"
-                        Content="Search"
-                        Margin="0,0,5,0"
-                        Command="{Binding SearchCmd}" />
+                <CheckBox Grid.Column="2"
+                          Content="Parallel Search"
+                          VerticalContentAlignment="Center"
+                          Margin="5"
+                          IsChecked="{Binding IsParallelSearch}"/>
                 <Button Grid.Column="3"
-                        Content="Cancel"
-                        Margin="0,0,5,0"
-                        Command="{Binding CancelCmd}"/>
+                        Content="Search"
+                        Margin="0,5,5,5"
+                        Command="{Binding SearchCmd}" />
                 <Button Grid.Column="4"
+                        Content="Cancel"
+                        Margin="0,5,5,5"
+                        Command="{Binding CancelCmd}" />
+                <Button Grid.Column="5"
                         Content="Delete"
                         Command="{Binding DeleteCmd}"
-                        CommandParameter="{Binding ElementName=EmptyFolders}"/>
+                        CommandParameter="{Binding ElementName=EmptyFolders}" />
             </Grid>
         </Grid>
 
@@ -135,13 +141,14 @@
                      IsIndeterminate="{Binding DeleteEmptyFolderViewModel.ProgressMode}"
                      Value="{Binding DeleteEmptyFolderViewModel.ProgressValue}"
                      Minimum="0"
-                     Maximum="100"/>
+                     Maximum="100" />
 
         <!--<Frame Grid.Row="3"
                Source="StatusView.xaml"
                NavigationUIVisibility="Hidden" />-->
 
-        <StackPanel Grid.Row="3" Tag="Status"
+        <StackPanel Grid.Row="3"
+                    Tag="Status"
                     Orientation="Horizontal"
                     Margin="5">
 

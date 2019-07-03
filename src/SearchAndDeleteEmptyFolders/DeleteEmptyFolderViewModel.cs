@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using CodeDek.Lib;
 using CodeDek.Lib.Mvvm;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -21,28 +24,22 @@ namespace SearchAndDeleteEmptyFolders
         private int _errors;
         private bool _isSelectAllChecked;
         private bool _progressMode;
-        private double _progressValue = 45;
+        private double _progressValue = 0;
         private bool _isBusy;
         private int _selectionChanged = -1;
+        private bool _isParallelSearch;
+        private bool _isCanceledSearch;
 
         public DeleteEmptyFolderViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
-            EmptyFolders.Add(@"c:\win");
-            EmptyFolders.Add(@"c:\prd");
-            EmptyFolders.Add(@"c:\pass");
-            EmptyFolders.Add(@"c:\tmp");
 
-            _token = _cts.Token;
-            _token.Register(() => _cts.Dispose());
+            ClearlCmd.Execute();
 
-            EmptyFolders.CollectionChanged += (s, e) =>
-            {
-                OnPropertyChanged(nameof(ClearlCmd));
-            };
+            EmptyFolders.CollectionChanged += (s, e) => OnPropertyChanged(nameof(ClearlCmd));
         }
 
-        public ObservableCollection<string> EmptyFolders { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> EmptyFolders { get; private set; } = new ObservableCollection<string>();
 
         public string Source
         {
@@ -95,7 +92,8 @@ namespace SearchAndDeleteEmptyFolders
             get => _isBusy;
             set => Set(ref _isBusy, value)
                 .Alert(nameof(SearchCmd))
-                .Alert(nameof(CancelCmd));
+                .Alert(nameof(CancelCmd))
+                .Alert(nameof(ClearlCmd));
         }
 
         public int SelectedIndex
@@ -104,6 +102,25 @@ namespace SearchAndDeleteEmptyFolders
             set => Set(ref _selectionChanged, value)
                 .Alert(nameof(DeleteCmd));
         }
+
+        public bool IsParallelSearch
+        {
+            get => _isParallelSearch;
+            set => Set(ref _isParallelSearch, value);
+        }
+
+        public bool IsCanceledSearch
+        {
+            get => _isCanceledSearch;
+            set => Set(ref _isCanceledSearch, value)
+                .Alert(nameof(CancelCmd));
+        }
+
+        public Cmd CancelCmd => new Cmd(() =>
+        {
+            _cts.Cancel();
+            IsCanceledSearch = true;
+        }, () => IsBusy && !IsCanceledSearch);
 
         public Cmd SelectSourceCmd => new Cmd(() =>
         {
@@ -138,41 +155,70 @@ namespace SearchAndDeleteEmptyFolders
             Deleted = 0;
             Errors = 0;
             IsSelectAllChecked = false;
-        }, () => EmptyFolders.Count > 0 || Source.Length > 0 || Errors > 0 || IsSelectAllChecked);
+            IsBusy = false;
+            IsCanceledSearch = false;
+            ProgressMode = false;
+            ProgressValue = 0;
+            SelectedIndex = -1;
+            _cts = new CancellationTokenSource();
+            _token = _cts.Token;
+            _token.Register(() => _cts.Dispose());
+        }, () => (EmptyFolders.Count > 0 || Source.Length > 0 || Errors > 0 || IsSelectAllChecked) && !IsBusy);
 
-        public Cmd SearchCmd => new Cmd(() =>
+        public Cmd SearchCmd => new Cmd(async () =>
         {
             ClearlCmd.Execute();
             IsBusy = true;
             var sw = new Stopwatch();
+            ProgressMode = true;
+            sw.Start();
 
-            // while search
-            // update progress
-            // update found
-            // Add to list
-            // update errors
+            await Storage.FindEmptyDirectoriesAsync(Source, new Progress<(bool isSuccess, string result)>(h =>
+            {
+                if (h.isSuccess)
+                {
+                    EmptyFolders.Add(h.result);
+                    Found++;
+                }
+                else
+                {
+                    Errors++;
+                }
+            }), _token, IsParallelSearch);
 
-            _mainViewModel.Status = $"Search took {sw.ElapsedMilliseconds} milliseconds. {Found} empty folders found.";
+            sw.Stop();
+            ProgressMode = false;
+
+            if (IsParallelSearch && EmptyFolders.Count > 1)
+                EmptyFolders = Fun.SortCollection(EmptyFolders, true);
+
+            _mainViewModel.Status = $"{(IsCanceledSearch ? "Partial (since it was canceled by user) " : "")}Search took {sw.ElapsedMilliseconds} milliseconds. {Found} empty folders found.";
             _mainViewModel.Passage = "";
             _mainViewModel.PassageUrl = "";
             IsBusy = false;
         }, () => Source.Length > 0 && !IsBusy);
 
-        public Cmd CancelCmd => new Cmd(() => _cts.Cancel(), () => IsBusy);
-
         public Cmd<ListBox> DeleteCmd => new Cmd<ListBox>(lb =>
         {
+            var removed = new List<string>();
             foreach (string item in lb.SelectedItems)
             {
                 try
                 {
                     Directory.Delete(item);
+                    removed.Add(item);
+                    Deleted++;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     Errors++;
                 }
+            }
+
+            foreach (var item in removed)
+            {
+                EmptyFolders.Remove(item);
             }
 
             SelectedIndex = -1;

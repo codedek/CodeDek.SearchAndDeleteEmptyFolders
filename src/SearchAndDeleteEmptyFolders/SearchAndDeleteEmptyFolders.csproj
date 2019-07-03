@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CodeDek.Lib">
-      <HintPath>..\..\..\CodeDek.Functions.Library\src\CodeDek.Lib\bin\Debug\netstandard2.0\CodeDek.Lib.dll</HintPath>
+      <HintPath>..\..\..\CodeDek.Functions.Library\src\CodeDek.Lib\bin\Release\netstandard2.0\CodeDek.Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -71,6 +71,13 @@
                                   Command="{Binding CopyMenuCmd}" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
+                
+                <!--<ListBox.ItemTemplate>
+                    <HierarchicalDataTemplate>
+                        <CheckBox Content="{Binding}"
+                                  IsChecked="{Binding IsChecked}" />
+                    </HierarchicalDataTemplate>
+                </ListBox.ItemTemplate>-->
             </ListBox>
 
             <Grid Grid.Row="3"

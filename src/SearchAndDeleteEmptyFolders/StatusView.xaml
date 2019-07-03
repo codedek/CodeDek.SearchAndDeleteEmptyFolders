@@ -16,7 +16,7 @@
                 Orientation="Horizontal"
                 Margin="5">
 
-        <TextBlock Text="{Binding Status, Mode=TwoWay}"
+        <TextBlock Text="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Foreground="{Binding StatusColor, Mode=TwoWay}" />
 
         <TextBlock Margin="5,0">

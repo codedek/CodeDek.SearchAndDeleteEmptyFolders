@@ -51,16 +51,18 @@
                        Text="Select a directory to search for empty folders" />
             <TextBox Grid.Row="1"
                      Grid.Column="0"
-                     Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}"/>
+                     IsReadOnly="True"
+                     Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="1"
                     Grid.Column="1"
                     Content="Select..."
-                    Command="{Binding SelectSourceCmd}"/>
+                    Command="{Binding SelectSourceCmd}" />
             <ListBox Grid.Row="2"
                      Grid.ColumnSpan="2"
                      x:Name="EmptyFolders"
                      SelectionMode="Multiple"
-                     ItemsSource="{Binding EmptyFolders}"/>
+                     ItemsSource="{Binding EmptyFolders}"
+                     SelectedIndex="{Binding SelectedIndex}"/>
 
             <Grid Grid.Row="3"
                   Grid.ColumnSpan="2"
@@ -78,7 +80,7 @@
                           Content="Select All"
                           IsChecked="{Binding IsSelectAllChecked}"
                           Command="{Binding SelectAllCmd}"
-                          CommandParameter="{Binding ElementName=EmptyFolders}"/>
+                          CommandParameter="{Binding ElementName=EmptyFolders}" />
                 <TextBlock Grid.Column="1"
                            Text="{Binding Found}" />
                 <TextBlock Grid.Column="2"
@@ -111,26 +113,48 @@
                 <Button Grid.Column="1"
                         Content="Clear"
                         Margin="0,0,5,0"
-                        Command="{Binding ClearlCmd}"/>
+                        Command="{Binding ClearlCmd}" />
                 <Button Grid.Column="2"
                         Content="Search"
-                        Margin="0,0,5,0" />
+                        Margin="0,0,5,0"
+                        Command="{Binding SearchCmd}" />
                 <Button Grid.Column="3"
                         Content="Cancel"
-                        Margin="0,0,5,0" />
+                        Margin="0,0,5,0"
+                        Command="{Binding CancelCmd}"/>
                 <Button Grid.Column="4"
-                        Content="Delete" />
+                        Content="Delete"
+                        Command="{Binding DeleteCmd}"
+                        CommandParameter="{Binding ElementName=EmptyFolders}"/>
             </Grid>
         </Grid>
 
-            <ProgressBar Grid.Row="2"
-                         Grid.ColumnSpan="2"
-                         Height="5"
-                         IsIndeterminate="{Binding ProgressMode}"
-                         Visibility="{Binding ProgressVisible}" />
+        <ProgressBar Grid.Row="2"
+                     Grid.ColumnSpan="2"
+                     Height="5"
+                     IsIndeterminate="{Binding DeleteEmptyFolderViewModel.ProgressMode}"
+                     Value="{Binding DeleteEmptyFolderViewModel.ProgressValue}"
+                     Minimum="0"
+                     Maximum="100"/>
 
-        <Frame Grid.Row="3"
+        <!--<Frame Grid.Row="3"
                Source="StatusView.xaml"
-               NavigationUIVisibility="Hidden" />
+               NavigationUIVisibility="Hidden" />-->
+
+        <StackPanel Grid.Row="3" Tag="Status"
+                    Orientation="Horizontal"
+                    Margin="5">
+
+            <TextBlock Text="{Binding Status, Mode=TwoWay}"
+                       Foreground="{Binding StatusColor, Mode=TwoWay}" />
+
+            <TextBlock Margin="5,0">
+                    <Hyperlink Command="{Binding GoToUrlCmd}">
+                        <Hyperlink.Inlines>
+                            <Run Text="{Binding Passage, Mode=TwoWay}" />
+                        </Hyperlink.Inlines>
+                    </Hyperlink>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </Window>
